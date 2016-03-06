@@ -1,4 +1,17 @@
 <?php
+/*Autor:Matej Marusak, VUT FIT 2016, IPP-SYN, proj. 1
+#SYN:xmarus06
+ *Hlavny subor, ktory sa stara o vyvolanie vsetkych operacii
+ *Cinnosti:
+ *	1) Parsuj commandLine
+ *	2) Otvor vstupny subor a nacitaj jeho obsah, resp nacitaj z stdin.
+ *	3) Otvor formatovaci subor a rozparsuj
+ *	4) Pre kazdy zaznam v formatovacom subore, vykonaj vsetky potrebne operaciu(nahradenie, spojenie..)
+ *	5) Vysledok uloz do suboru, resp na stdout
+ *	6) Profit
+ */
+
+
 include 'src/regexConverter.php';
 include 'src/merger.php';
 include 'src/tagEditor.php';
@@ -14,14 +27,15 @@ function main(){
         error("Nespravne udaje prikazovej riadky",1);
     if ($opts->isHelp){
         //TODO vypis helpu
-        print ("HELP\n");
+	print ("HELP");
+        exit(0);
     }
-    $formatFileRows = [];
+    $formatFileRows = array();
     //pokusime sa otvorit formatovaci subor 
     if ($opts->format === ""){
-        $formatFileRows = [];
+        $formatFileRows = array();
     } else if (!is_readable($opts->format)){
-        $formatFileRows = [];
+        $formatFileRows = array();
     } else {
         $h = fopen($opts->format,'r');
         while (($ln = fgets($h)) !== false)
@@ -32,7 +46,8 @@ function main(){
     }
 
     //Upravime si nacitane udaje z formatovacieho suboru
-    if ($formatFileRows != []){
+    //if ($formatFileRows != []){
+    if (!empty($formatFileRows)){
         foreach ($formatFileRows as &$vl)
             if (count($vl) == 2){
                 //upravime si regularne vyrazi vhodne pre php
@@ -61,11 +76,11 @@ function main(){
     //cez kazdy zaznam vo fomratovacom subore prejdeme
     $newRes = $origInput;
     foreach($formatFileRows as $f){
-        $found  = [];
+        $found  = array();
         //najdeme vsetky vyhovujuce retazce
         preg_match_all("/(".$f[0].")/",$origInput, $found, PREG_OFFSET_CAPTURE);
         //a pre kazdy vyskyt 
-        if ($found != []){
+        if (!empty($found)){
             foreach($found[0] as $fone){
                 //ale musi sa jednat o neprazdny retazec
                 if ($fone[0] != ""){

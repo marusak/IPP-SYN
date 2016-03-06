@@ -1,4 +1,11 @@
 <?php
+/*Autor:Matej Marusak, VUT FIT 2016, IPP-SYN, proj. 1
+#SYN:xmarus06
+ * Modul pre konverziu regex ala IPP do regex ala PHP.
+ * Je to na principe konecneho automatu. Stavy podla znakov, ktore mozu nasledovat 
+ */
+
+    //KOntrola ++, **, *+, +* a pod, resp rozsirenie pre NQS
     function checkForB($old){
         //TODO rozsirenie NQS
         if (strpos($old, '++') !== false)
@@ -16,7 +23,6 @@
     //Dostane regex z tvare v akom sa nachadza v konfgacnom subore a prerobi ho na format pre php 
         //regex
     function editRegex($old){
-        print("-".$old."-");
         if (!checkForB($old))
             error("Chyba v regularnom vyraze", 4);
         

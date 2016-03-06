@@ -1,4 +1,9 @@
 <?php
+/*Autor:Matej Marusak, VUT FIT 2016, IPP-SYN, proj. 1
+#SYN:xmarus06
+ * Modul pre spracovanie prikaozvej riadky - lebo getopts nemam rad. 
+ * 	                                   - alebo preco pouzit funkciu, ked si to mozem urobit sam?
+ */
 class getoptS {
     public $cmdLine;
     

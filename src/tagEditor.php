@@ -1,4 +1,9 @@
 <?php
+/*Autor:Matej Marusak, VUT FIT 2016, IPP-SYN, proj. 1
+#SYN:xmarus06
+ * Modul pre upravu formatovacich prikazov na skutocne tagy.
+ * Kazdy tag sa skontroluje ci existuje v mnozine povolenych formatov a ak hej, tak sa skonvertuje
+ */
 
 function editTags($formater){ 
     

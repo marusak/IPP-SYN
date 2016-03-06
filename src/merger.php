@@ -1,4 +1,13 @@
 <?php
+/*Autor:Matej Marusak, VUT FIT 2016, IPP-SYN, proj. 1
+#SYN:xmarus06
+ * Modul pre spajanie retazcov, ktore vznikaju pri nahradzani tagmi.
+ * Ou yes, je to magia, ale to ste este nevideli regexConvertet.php 
+ * Princip -> majme 2 retazce, ktore sa lisia len v tagoch
+ * 1) Ideme cez retazce, ak su znaky rovnake (a nie <) tak kopirujem do vysledku
+ * 2) Ked zacina alebo konci tag iba v jednom, skopirujem tag
+ * 3) Ak je v oboch tag, tak jednoducho podla poriadia skopirujem ten spravny (vid dokumentacia)
+ */
 
 function startsTag($str, $i){
     $j = $i;
