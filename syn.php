@@ -26,8 +26,21 @@ function main(){
     if (!$opts->parseCmd())
         error("Nespravne udaje prikazovej riadky",1);
     if ($opts->isHelp){
-        //TODO vypis helpu
-	print ("HELP");
+        print ("\033[34m                    Syntax highlight\033[0m \n");
+        print ("Program takes table of regular expresions with expected formats.\n");
+        print ("To the input, HTML tags are added considering the format file.\n");
+        print ("With adequate regular expresions a syntax highlighting can be achieved\n\n");
+        print ("\nAuthor: Matej Marusak, xmarus06@stud.fit.vutbr.cz\n");
+        print ("As a school project - School: BUT FIT, Czech Republic, Subject :IPP\n");
+        print ("Created: March 2016\n\n\n");
+        print ("Usage: php syn.php --help\n");
+        print ("       php syn.php [--format=filename] [--input=filename] [--output=filename] [--br]\n");
+        print ("\nOptions:\n");
+        print ("     --help: Print this help and exit\n");
+        print ("     --format=filename: Format file. If missing, no changes are made. For structure fo this file see documentation.\n");
+        print ("     --input=filename: Input file in UTF-8. If missing, stdin is considered.\n");
+        print ("     --output=filename: Output file in UTF-8. If missing, stdout is considered.\n");
+        print ("     --br: Adds a <br /> element at the end of each line.\n\n\n");
         exit(0);
     }
     $formatFileRows = array();
