@@ -1,9 +1,9 @@
 <?php
-include 'regexConverter.php';
-include 'merger.php';
-include 'tagEditor.php';
-include 'getoptS.php';
-include 'errors.php';
+include 'src/regexConverter.php';
+include 'src/merger.php';
+include 'src/tagEditor.php';
+include 'src/getoptS.php';
+include 'src/errors.php';
 
 function main(){
     global $argv; 

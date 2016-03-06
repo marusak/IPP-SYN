@@ -1,0 +1,238 @@
+#!/bin/bash
+# @brief 	Test script for SYN - 1.IPP project in PHP
+# Author: 	Jozef Zuzelka, FIT VUT
+# Mail:		xzuzel00<at>stud.fit.vutbr.cz
+# Date:		24.2.2016
+# TODO: 	
+
+if [ "$#" != "2" ]; then
+	echo 'Zadajte subor na testovanie a typ testu: `test.sh (p|r) syn.php`'
+	exit 1
+elif [ ! -r "./$2" ]; then
+	echo 'Zadajte platny subor!'
+	exit 1
+elif [ "$1" != "p" -a "$1" != "r" ]; then
+	echo 'Zadajte validne parametre!'
+	exit 1
+fi
+
+TDIR="TESTS"
+PROG='-d open_basedir=""'" $2"
+#PROG="./$2"
+TEST=0
+ERR=0
+
+if [ ! -e "./$TDIR/" ];then
+	mkdir ./$TDIR
+fi
+
+
+if [ "$1" == "p" ] ; then # testovanie parametrov --START
+
+	touch $TDIR/i_ok.txt $TDIR/o_ok.txt $TDIR/f_ok.txt
+	touch $TDIR/i_bad.txt $TDIR/o_bad.txt $TDIR/f_bad.txt
+	chmod -rw $TDIR/i_bad.txt
+	chmod -w $TDIR/o_bad.txt
+	chmod -r $TDIR/f_bad.txt
+	
+	### ---------------------------------------------------------------------------- ###
+	TESTCMD="php $PROG --help"
+	TEST=`expr $TEST + 1`
+	printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+	OUT="$($TESTCMD)"
+	OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+	if [ "$?" == "0" -a ! -z "$OUT" -a -z "$OUT_ERR" ]; then
+		printf "\e[38;5;82mOK\e[0m\n"
+	else
+		printf "\e[1;41m FAIL \e[0m\n"
+		ERR=`expr $ERR + 1`
+	fi
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--input=$TDIR/i_ok.txt","--output=$TDIR/o_ok.txt","--format=$TDIR/f_ok.txt","--br"}; do
+		TESTCMD="php $PROG --help $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" != "0" -a -z "$OUT" -a ! -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--input=$TDIR/i_ok.txt","--output=$TDIR/o_ok.txt","--format=$TDIR/f_ok.txt","--br"}; do
+		TESTCMD="php $PROG $argument --help"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" != "0" -a -z "$OUT" -a ! -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--input=$TDIR/i_ok.txt","--output=$TDIR/o_ok.txt","--format=$TDIR/f_ok.txt","--br","--help"}; do
+		TESTCMD="php $PROG $argument $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" != "0" -a -z "$OUT" -a ! -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--input=$TDIR/i_bad.txt","--output=$TDIR/o_bad.txt","jkhghf"}; do
+		TESTCMD="php $PROG $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" != "0" -a ! -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"-h --input=$TDIR/i_bad.txt","-h","--output=$TDIR/o_bad.txt asd","dsa","dsaf sfa "}; do
+		TESTCMD="php $PROG $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" != "0" -a -z "$OUT" -a ! -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--input=$TDIR/i_ok.txt","--output=$TDIR/o_ok.txt","--format=$TDIR/f_ok.txt"}; do
+		TESTCMD="php $PROG $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" == "0" -a -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--input=$TDIR/i_ok.txt --output=$TDIR/o_ok.txt","--output=$TDIR/o_ok.txt --input=$TDIR/i_ok.txt","--format=$TDIR/f_ok.txt --input=$TDIR/i_ok.txt","--output=$TDIR/o_ok.txt --format=$TDIR/f_ok.txt --input=$TDIR/i_ok.txt","--output=$TDIR/o_ok.txt --format=$TDIR/f_ok.txt --br --input=$TDIR/i_ok.txt"}; do
+		TESTCMD="php $PROG $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" == "0" -a -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	### ---------------------------------------------------------------------------- ###
+	for argument in {"--format=$TDIR/f_bad.txt","--format=$TDIR/fok.txt"}; do
+		TESTCMD="php $PROG $argument"
+		TEST=`expr $TEST + 1`
+		printf "\e[38;5;202m[TEST $TEST]\e[0m $TESTCMD\n"
+	
+		OUT="$($TESTCMD)"
+		OUT_ERR="$($TESTCMD 2>&1 >/dev/null)"
+		if [ "$?" == "0" -a -z "$OUT_ERR" ]; then
+			printf "\e[38;5;82mOK\e[0m\n"
+		else
+			printf "\e[1;41m FAIL \e[0m\n"
+			ERR=`expr $ERR + 1`
+		fi
+	done
+	
+	if [ $ERR -eq 0 ]; then
+		COL='\e[32m'
+	else
+		COL='\e[31m'
+	fi
+	printf "\n${COL}+------------------------------------+\n| \e[0m Celkovo uspesnych `expr $TEST - $ERR` z $TEST testov  ${COL}|\n+------------------------------------+\e[0m\n"
+
+	 # testovanie parametrov --END
+else # testovanie regularnych --START
+	TEST=0
+	ERR=0
+	IN="in.txt"
+	FF="ff.txt"
+	echo "testovaci vstup" >./$TDIR/$IN
+
+
+	formatFile="$(cat mojformat.txt)"
+	OLDIFS=$IFS
+	IFS=$'\n'
+	for line in $(cat mojformat.txt); do
+        echo -n "$line" >./$TDIR/$FF
+		printf "\tbold\n" >>./$TDIR/$FF
+
+		eval php $PROG --input=$TDIR/$IN --format=$TDIR/$FF >/dev/null
+		RET=$?
+		
+		TEST=`expr $TEST + 1`
+
+		if [[ $RET != 0 ]]; then
+			echo -n ">$line<"; printf "\t\tFAIL:<$RET>"
+			if [[ "$line" == *"K"* ]]; then
+				printf "\t\e[31m<-\e[0m"
+				ERR=`expr $ERR + 1`
+			fi
+		else
+			echo -n ">$line<"; printf "\t\tOK:<$RET>"
+			if [[ "$line" != *"K"* ]]; then
+				printf "\t\e[31m<-\e[0m"
+				ERR=`expr $ERR + 1`
+			fi
+		fi
+		printf "\n"
+	done 
+	#done <$mojformat.txt
+	IFS=OLDIFS
+
+	if [ $ERR -eq 0 ]; then
+		COL='\e[32m'
+	else
+		COL='\e[31m'
+	fi
+	printf "\n${COL}+--------------------------------------+\n| \e[0m Celkovo uspesnych `expr $TEST - $ERR` z $TEST testov  ${COL}|\n+--------------------------------------+\e[0m\n"
+fi #testovanie regularnych --END
+
+printf "Zmazat subory testov? [A/n]: "
+read i
+if [ "$i" == "a" -o -z "$i" ]; then
+	rm -rf ./$TDIR
+fi

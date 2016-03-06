@@ -13,13 +13,13 @@
 
     }
         
-//TODO !(a|b) , forum
     //Dostane regex z tvare v akom sa nachadza v konfgacnom subore a prerobi ho na format pre php 
         //regex
     function editRegex($old){
+        print("-".$old."-");
         if (!checkForB($old))
-            error("Chyba v regularnom vyraze", 4);//TODO error code
-
+            error("Chyba v regularnom vyraze", 4);
+        
         $pars = 0;//pocet zatvoriek
         $state = 0;
         $result = "";
