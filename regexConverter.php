@@ -1,14 +1,15 @@
 <?php
     function checkForB($old){
-    if (strpos($old, '++') !== false)
-        return false;
-    if (strpos($old, '*+') !== false)
-        return false;
-    if (strpos($old, '+*') !== false)
-        return false;
-    if (strpos($old, '**') !== false)
-        return false;
-    return true;
+        //TODO rozsirenie NQS
+        if (strpos($old, '++') !== false)
+            return false;
+        if (strpos($old, '*+') !== false)
+            return false;
+        if (strpos($old, '+*') !== false)
+            return false;
+        if (strpos($old, '**') !== false)
+            return false;
+        return true;
 
     }
         
@@ -22,6 +23,7 @@
         $pars = 0;//pocet zatvoriek
         $state = 0;
         $result = "";
+        $parsInNeg = 0;
         $wasC = false;
         $old = str_split($old);
         foreach ($old as $token){
@@ -89,11 +91,16 @@
                     $state = 3;//not sure here
                 } else if ($token === "%"){
                     $state = 5;
-                } else if (in_array($token, str_split(".)(!+*|"))){
+                } else if (in_array($token, str_split(").+*|"))){
                     $state = 4;
                 } else if (in_array($token, str_split("/\\?[^]\${}=<>:-\""))){
                     $state = 3;
                     $result = $result."[^\\".$token."]";
+                } else if ($token === "("){//let the fun begin !(
+                    $parsInNeg += 1;
+                    $result = $result."[^(";
+                    $wasC = true;
+                    $state = 7;
                 } else{
                     $state = 3;
                     $result = $result."[^".$token."]";
@@ -148,19 +155,19 @@
                     $result = $result."[^[\s\S]]";
                     $state = 3;
                 } else if ($token === "l"){
-                    $result = $result."[^[a-z]";
+                    $result = $result."[^[a-z]]";
                     $state = 3;
                 } else if ($token === "L"){
-                    $result = $result."[^[A-Z]";
+                    $result = $result."[^[A-Z]]";
                     $state = 3;
                 } else if ($token === "w"){
-                    $result = $result."[^[a-zA-Z]";
+                    $result = $result."[^[a-zA-Z]]";
                     $state = 3;
                 } else if ($token === "W"){
-                    $result = $result."[^[a-zA-Z0-9]";
+                    $result = $result."[^[a-zA-Z0-9]]";
                     $state = 3;
                 } else if ($token === "%"){
-                    $result = $result."[^%]";
+                    $result = $result."[^%]]";
                     $state = 3;
                 } else
                     $state = 4;
@@ -197,10 +204,96 @@
                     break;
                 }
                 break;
+            case 7://!(
+                //kontrola jedneho!
+                if (in_array($token, str_split(".|+*!"))){
+                    $state = 4;
+                } else if ($token === "("){
+                    $parsInNeg += 1;
+                    $result = $result.$token;
+                    $state = 7;
+                    $wasC = true;
+                } else if ($token === ")"){
+                    $parsInNeg -= 1;
+                    if ($parsInNew < 0 || $wasC)
+                        $state = 4;
+                    else if ($parsInNeg === 0){//koniec utrpenia
+                        $result = $result.$token."]";
+                        $state = 3;
+                    } else {
+                        $result = $result.$token;
+                        $state = 8;
+                    }
+                    $wasC = false;
+                } else if (in_array($token, str_split("/\\?[^]\${}=<>:-\""))){
+                    $result = $result."\\".$token;
+                    $state = 8;
+                    $wasC = false;
+                } else if ($token === "%"){
+                    $state = 9;
+                    $wasC = false;
+                } else {
+                    $result = $result.$token;
+                    $state = 8;
+                    $wasC = false;
+                }
+                break;
+            case 8: //bol jeden znak alebo ), maximalne tak | alebo snad )
+                if ($token === "|"){
+                    $result = $result.$token;
+                    $state = 7;
+                    $wasC = false;
+                } else if ($token === ")"){
+                    $parsInNeg -= 1;
+                    if ($parsInNeg < 0 || $wasC)
+                        $state = 4;
+                    else if ($parsInNeg === 0){//koniec utrpenia
+                        $result = $result.$token."]";
+                        $state = 3;
+                    } else {
+                        $result = $result.$token;
+                        $state = 8;
+                    }
+                    $wasC = false;
+                } else {
+                    $state = 4;
+                }
+                break;
+            case 9://% v !(
+                $wasC = false;
+                if (in_array($token, str_split("sdtn.|!*+)("))){
+                    $result = $result."[^\\".$token."]";
+                    $state = 8;
+                } else if ($token === "a"){
+                    $result = $result."[\s\S]";
+                    $state = 8;
+                } else if ($token === "l"){
+                    $result = $result."[a-z]";
+                    $state = 8;
+                } else if ($token === "L"){
+                    $result = $result."[A-Z]";
+                    $state = 8;
+                } else if ($token === "w"){
+                    $result = $result."[a-zA-Z]";
+                    $state = 8;
+                } else if ($token === "W"){
+                    $result = $result."[a-zA-Z0-9]";
+                    $state = 8;
+                } else if ($token === "%"){
+                    $result = $result."%";
+                    $state = 8;
+                } else
+                    $state = 4;
+                break;
+
+                //moze byt jeden znak, %znak, specialny_znak
+                //nemoze byt binarny, unarny, !
+                ///zavorky++
+
             }
 
         }
-        if ($pars != 0 || $state === 0 || $state === 1 || $state === 2 || $state === 4 || $state === 5 || $state === 6)
+        if ($pars != 0 || $state != 3)
             error("Chyba v regularnom vyraze", 4);//TODO error code
         return $result;
     }
