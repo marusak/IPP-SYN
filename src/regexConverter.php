@@ -158,22 +158,22 @@
                     $result = $result."[^\\".$token."]";
                     $state = 3;
                 } else if ($token === "a"){
-                    $result = $result."[^[\s\S]]";
+                    $result = $result."[^\s\S]";
                     $state = 3;
                 } else if ($token === "l"){
-                    $result = $result."[^[a-z]]";
+                    $result = $result."[^a-z]";
                     $state = 3;
                 } else if ($token === "L"){
-                    $result = $result."[^[A-Z]]";
+                    $result = $result."[^A-Z]";
                     $state = 3;
                 } else if ($token === "w"){
-                    $result = $result."[^[a-zA-Z]]";
+                    $result = $result."[^a-zA-Z]";
                     $state = 3;
                 } else if ($token === "W"){
-                    $result = $result."[^[a-zA-Z0-9]]";
+                    $result = $result."[^a-zA-Z0-9]";
                     $state = 3;
                 } else if ($token === "%"){
-                    $result = $result."[^%]]";
+                    $result = $result."[^%]";
                     $state = 3;
                 } else
                     $state = 4;
