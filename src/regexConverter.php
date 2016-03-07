@@ -224,7 +224,7 @@
                     if ($parsInNew < 0 || $wasC)
                         $state = 4;
                     else if ($parsInNeg === 0){//koniec utrpenia
-                        $result = $result.$token."]";
+                        $result = $result.")]";
                         $state = 3;
                     } else {
                         $result = $result.$token;
@@ -254,7 +254,7 @@
                     if ($parsInNeg < 0 || $wasC)
                         $state = 4;
                     else if ($parsInNeg === 0){//koniec utrpenia
-                        $result = $result.$token."]";
+                        $result = $result.")]";
                         $state = 3;
                     } else {
                         $result = $result.$token;
@@ -268,22 +268,22 @@
             case 9://% v !(
                 $wasC = false;
                 if (in_array($token, str_split("sdtn.|!*+)("))){
-                    $result = $result."[^\\".$token."]";
+                    $result = $result."\\".$token;
                     $state = 8;
                 } else if ($token === "a"){
-                    $result = $result."[\s\S]";
+                    $result = $result."\s\S";
                     $state = 8;
                 } else if ($token === "l"){
-                    $result = $result."[a-z]";
+                    $result = $result."a-z";
                     $state = 8;
                 } else if ($token === "L"){
-                    $result = $result."[A-Z]";
+                    $result = $result."A-Z";
                     $state = 8;
                 } else if ($token === "w"){
-                    $result = $result."[a-zA-Z]";
+                    $result = $result."a-zA-Z";
                     $state = 8;
                 } else if ($token === "W"){
-                    $result = $result."[a-zA-Z0-9]";
+                    $result = $result."a-zA-Z0-9";
                     $state = 8;
                 } else if ($token === "%"){
                     $result = $result."%";
@@ -301,6 +301,7 @@
         }
         if ($pars != 0 || $state != 3)
             error("Chyba v regularnom vyraze", 4);//TODO error code
+        var_dump($result);
         return $result;
     }
 
