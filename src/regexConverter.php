@@ -8,24 +8,29 @@
     //KOntrola ++, **, *+, +* a pod, resp rozsirenie pre NQS
     function checkForB($old){
         //TODO rozsirenie NQS
+        /*
         if (strpos($old, '++') !== false)
-            return false;
+            error("Chyba v regularnom vyraze", 4);
         if (strpos($old, '*+') !== false)
-            return false;
+            error("Chyba v regularnom vyraze", 4);
         if (strpos($old, '+*') !== false)
-            return false;
+            error("Chyba v regularnom vyraze", 4);
         if (strpos($old, '**') !== false)
-            return false;
-        return true;
+            error("Chyba v regularnom vyraze", 4);
+         */
+        $old = preg_replace('/(\+*\*+\+*)+/', '*', $old);
+        $old = preg_replace('/(\\++)/', '+', $old);
+        return $old;
 
     }
         
     //Dostane regex z tvare v akom sa nachadza v konfgacnom subore a prerobi ho na format pre php 
         //regex
     function editRegex($old){
-        if (!checkForB($old))
+        /*if (!checkForB($old))
             error("Chyba v regularnom vyraze", 4);
-        
+         */
+        $old = checkForB($old);
         $pars = 0;//pocet zatvoriek
         $state = 0;
         $result = "";
@@ -301,7 +306,6 @@
         }
         if ($pars != 0 || $state != 3)
             error("Chyba v regularnom vyraze", 4);//TODO error code
-        var_dump($result);
         return $result;
     }
 
